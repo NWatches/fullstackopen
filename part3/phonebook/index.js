@@ -80,11 +80,10 @@ app.get('/info', (request, response) => {
         })
     }
 
-    const note = {
-        "id": id,
-        "name" : body.name,
-        "number": body.number,
-    }
+    const person = new Person({
+      name: body.name,
+      number: body.number
+    });
 
     person.save().then(savedPerson => {
       response.json(savedNote)
