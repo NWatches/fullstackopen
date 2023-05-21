@@ -7,6 +7,7 @@ const mongoose = require('mongoose')
 
 app.use(express.static('build'))
 app.use(express.json())
+app.use(requestLogger)
 
 morgan.token('body', function (req, res) { return JSON.stringify(req.body) })
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"))
@@ -38,12 +39,6 @@ let notes = [
     "number": "39-23-6423122"
     }
 ]
-
-app.get('/api/notes', (request, response) => {
-  Person.find({}).then(people => {
-    response.json(people)
-  })
-})
   
 app.get('/info', (request, response) => {
     const d = new Date()
@@ -54,16 +49,22 @@ app.get('/info', (request, response) => {
 
   app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
-    Note.findById(request.params.id).then(note => {
-      response.json(note)
+    Person.findById(request.params.id).then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
     })
+    .catch(error => next(error))
   })
 
   app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    notes = notes.filter(note => note.id !== id)
-
-    response.status(204).end()
+    Note.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
   })
 
   app.post('/api/persons', (request, response) => {
@@ -86,9 +87,34 @@ app.get('/info', (request, response) => {
     });
 
     person.save().then(savedPerson => {
-      response.json(savedNote)
+      response.json(savedPerson)
     })
   })
+
+
+  app.use(unknownEndpoint)
+
+  app.get('/api/notes', (request, response) => {
+    Person.find({}).then(people => {
+      response.json(people)
+    })
+  })
+
+  const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+      return response.status(400).send({ error: 'malformatted id' })
+    } 
+  
+    next(error)
+  }
+
+  app.use(errorHandler)
+
+  const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+  }
 
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
