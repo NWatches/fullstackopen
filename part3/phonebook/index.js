@@ -54,13 +54,9 @@ app.get('/info', (request, response) => {
 
   app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
-    const note = notes.find(note => note.id == id)
-
-    if (note) {
-        response.json(note)
-    } else {
-        response.status(404).end()
-    }
+    Note.findById(request.params.id).then(note => {
+      response.json(note)
+    })
   })
 
   app.delete('/api/persons/:id', (request, response) => {
@@ -90,8 +86,9 @@ app.get('/info', (request, response) => {
         "number": body.number,
     }
 
-    notes = notes.concat(note)
-    response.json(notes)
+    person.save().then(savedPerson => {
+      response.json(savedNote)
+    })
   })
 
   app.listen(PORT, () => {
