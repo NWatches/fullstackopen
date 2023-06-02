@@ -88,6 +88,7 @@ app.get('/info', (request, response) => {
 
     person.save().then(savedPerson => {
       response.json(savedPerson)
+      console.log(savedPerson)
     })
   })
 
