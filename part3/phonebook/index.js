@@ -2,7 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan');
 const app = express()
-const Person = require('.build/models/person')
+const Person = require('./build/models/person')
 const mongoose = require('mongoose')
 
 app.use(express.static('build'))
