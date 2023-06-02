@@ -82,6 +82,7 @@ app.get('/info', (request, response) => {
     }
 
     const person = new Person({
+      id: id,
       name: body.name,
       number: body.number
     });
