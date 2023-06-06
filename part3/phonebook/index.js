@@ -92,6 +92,9 @@ app.get('/info', (request, response) => {
     })
   })
 
+  const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+  }
 
   app.use(unknownEndpoint)
 
@@ -112,10 +115,6 @@ app.get('/info', (request, response) => {
   }
 
   app.use(errorHandler)
-
-  const unknownEndpoint = (request, response) => {
-    response.status(404).send({ error: 'unknown endpoint' })
-  }
 
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
