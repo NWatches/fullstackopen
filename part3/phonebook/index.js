@@ -13,7 +13,7 @@ app.use(morgan(":method :url :status :res[content-length] - :response-time ms :b
 
 // onst PORT = process.env.PORT
 app.listen(10000, () => {
-  console.log(`Server running on port ${PORT}`)
+  console.log(`Server running on port 10000`)
 })
 
 let notes = [
