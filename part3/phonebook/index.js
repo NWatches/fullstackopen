@@ -11,8 +11,8 @@ app.use(express.json())
 morgan.token('body', function (req, res) { return JSON.stringify(req.body) })
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"))
 
-const PORT = process.env.PORT
-app.listen(PORT, () => {
+// onst PORT = process.env.PORT
+app.listen(10000, () => {
   console.log(`Server running on port ${PORT}`)
 })
 
@@ -115,7 +115,3 @@ app.get('/info', (request, response) => {
   }
 
   app.use(errorHandler)
-
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-  })
