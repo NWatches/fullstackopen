@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 
 const url = process.env.MONGODB_URI
+const password = process.env.MONGODB_PASS
 
 console.log('connecting to', url)
 
