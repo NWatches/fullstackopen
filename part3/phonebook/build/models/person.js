@@ -3,7 +3,7 @@ require('dotenv').config()
 
 mongoose.set('strictQuery', false)
 
-const password = process.env.password
+const password = process.env.MONGODB_PASSWORD
 const url = process.env.MONGODB_URI
 
 console.log('connecting to', url)
@@ -14,6 +14,7 @@ mongoose.connect(url)
   })
   .catch((error) => {
     console.log('ur:', url)
+    console.log('p:', password)
     console.log('error connecting to MongoDB:', error.message)
   })
 
