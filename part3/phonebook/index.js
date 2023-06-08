@@ -38,7 +38,8 @@ let notes = [
     "number": "39-23-6423122"
     }
 ]
-  
+
+// get current date and length of notes
 app.get('/info', (request, response) => {
     const d = new Date()
     const resp = `<p>Phonebook has info for ${notes.length} people<p>
@@ -46,6 +47,7 @@ app.get('/info', (request, response) => {
     response.send(resp)
   })
 
+// get specific person by id
   app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     Person.findById(request.params.id).then(person => {
@@ -58,6 +60,7 @@ app.get('/info', (request, response) => {
     .catch(error => next(error))
   })
 
+// delete specific person by id
   app.delete('/api/persons/:id', (request, response) => {
     Note.findByIdAndRemove(request.params.id)
     .then(result => {
@@ -66,10 +69,13 @@ app.get('/info', (request, response) => {
     .catch(error => next(error))
   })
 
+// post person's name and number to phonebook
   app.post('/api/persons', (request, response) => {
+    // create random id
     const id = Math.random() * 1000
     const body = request.body
 
+    // error handle if missing name or number or name already exists
     if (!body.name || !body.number) {
         return response.status(400).json({
             error: 'name or number missing'
@@ -79,25 +85,26 @@ app.get('/info', (request, response) => {
             error: 'name must be unique'
         })
     }
-
+    // person Mongodb schema saving id, name, and number created from body
     const person = new Person({
       id: id,
       name: body.name,
       number: body.number
     });
 
+    // save person to MongoDB
     person.save().then(savedPerson => {
       response.json(savedPerson)
       console.log(savedPerson)
     })
   })
-
+  // handle unknown endpoint error
   const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
   }
 
   app.use(unknownEndpoint)
-
+  // retrieve all notes
   app.get('/api/notes', (request, response) => {
     Person.find({}).then(people => {
       response.json(people)
