@@ -2,6 +2,6 @@ POST http://localhost:3001/api/notes
 Content-Type: application/json
 
 {
-    "content": "Vs code rest client is a handy tool",
-    "important": true
+    "name": "Squidward",
+    "number": 812-413-1451
 }

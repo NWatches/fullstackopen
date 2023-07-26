@@ -87,29 +87,29 @@ app.delete('/api/notes/:id', (request, response) => {
 
 // Math.random creates large random number for ID
 // handle posting new person to server, fails if name/number missing, or number already exists
-  app.post('/api/persons', (request, response) => {
-    const body = request.body
-  
-    if (!body.content) {
-        return response.status(400).json({ 
-            error: 'content missing' 
-        })
-    } else if (persons.includes(body.content.number)) {
-        return response.status(400).json({
-            error: 'number already exists'
-        })
-    } else {
-        const note = {
-            content: body.content,
-            important: body.important || false,
-            id: Math.round(Math.random() * 1000000),
-          }
-        
-          notes = notes.concat(note)
-        
-          response.json(note)
-    }
-  })
+app.post('/api/persons', (request, response) => {
+  const body = request.body
+
+  if (!body.content) {
+      return response.status(400).json({ 
+          error: 'content missing' 
+      })
+  } else if (persons.includes(body.content.number)) {
+      return response.status(400).json({
+          error: 'number already exists'
+      })
+  } else {
+      const person = {
+          content: body.content,
+          important: body.important || false,
+          id: Math.round(Math.random() * 1000000),
+        }
+      
+        persons = persons.concat(person)
+      
+        response.json(note)
+  }
+})
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
