@@ -1,7 +1,7 @@
-POST http://localhost:3001/api/notes
+POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
     "name": "Squidward",
-    "number": 812-413-1451
+    "number": "812-413-1451"
 }

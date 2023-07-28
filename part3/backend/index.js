@@ -1,6 +1,9 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan');
 const cors = require('cors')
+const mongoose = require('mongoose')
+const Person = require('./models/person')
 
 const app = express()
 
@@ -21,7 +24,8 @@ morgan.token('post-data', (req) => {
   });
 
 // tiny config + custom ':post-data' token
-app.use(morgan('tiny :post-data'))
+app.use(morgan('tiny'))
+app.use(morgan(':post-data'))
 
 let persons = [
     { 
@@ -48,25 +52,33 @@ let persons = [
 
 // get mainpage
 app.get('/', (request, response) => {
-response.send('<h1>Hello World!</h1>')
+  response.send('<h1>Hello World!</h1>')
 })
 
 // get json of all persons
 app.get('/api/persons', (request, response) => {
-response.json(persons)
+  // within Person model use find with empty dict to return all
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 // get a specific person by ID
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
-    
-    if (person) {
-      response.json(person)
-    } else {
-      response.status(404).end()
-    }
-  })
+
+    Person.findById(id).then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(400).send({ error: 'malformed id' })
+    })
+})
 
 // get count of people and current date
 app.get('/info', (request, response) => {
@@ -89,25 +101,20 @@ app.delete('/api/notes/:id', (request, response) => {
 // handle posting new person to server, fails if name/number missing, or number already exists
 app.post('/api/persons', (request, response) => {
   const body = request.body
-
-  if (!body.content) {
+  // 
+  if (!body.name || !body.number) {
       return response.status(400).json({ 
-          error: 'content missing' 
-      })
-  } else if (persons.includes(body.content.number)) {
-      return response.status(400).json({
-          error: 'number already exists'
+          error: 'name or number missing' 
       })
   } else {
-      const person = {
-          content: body.content,
-          important: body.important || false,
-          id: Math.round(Math.random() * 1000000),
-        }
-      
-        persons = persons.concat(person)
-      
-        response.json(note)
+      const person = new Person({
+          name: body.name,
+          number: body.number,
+          id: Math.round(Math.random() * 1000000)
+        })
+        person.save().then(savedPerson => {
+          response.json(savedPerson)
+        })
   }
 })
 
