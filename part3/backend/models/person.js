@@ -20,7 +20,7 @@ mongoose.connect(url)
 const personSchema = new mongoose.Schema({
     name: String,
     number: String,
-    id: Number
+    id: String
 })
 
 // redefine JSON returned to not include MongoDB's ID and Version

@@ -27,6 +27,16 @@ morgan.token('post-data', (req) => {
 app.use(morgan('tiny'))
 app.use(morgan(':post-data'))
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+
 let persons = [
     { 
       "id": 1,
@@ -65,7 +75,7 @@ app.get('/api/persons', (request, response) => {
 
 // get a specific person by ID
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
+    const id = request.params.id
 
     Person.findById(id).then(person => {
       if (person) {
@@ -82,47 +92,60 @@ app.get('/api/persons/:id', (request, response) => {
 
 // get count of people and current date
 app.get('/info', (request, response) => {
-    const personCount = persons.length
-    const countMessage = `Phonebook has info for ${personCount} people`
-    const currentDate = new Date();
-    const resp = `<p>${countMessage}</p><p>${currentDate}</p>`
-    
-    response.send(resp)
+    Person.find({}).then(persons => {
+      const personCount = persons.length
+      const countMessage = `Phonebook has info for ${personCount} people`
+      const currentDate = new Date();
+      const resp = `<p>${countMessage}</p><p>${currentDate}</p>`
+
+      response.send(resp)
+    })
+    .catch(error => {
+      next(error)
+    })
   })
 
-app.delete('/api/notes/:id', (request, response) => {
-    const id = Number(request.params.id)
-    persons = persons.filter(person => person.id !== id)
-  
-    response.status(204).end()
+app.delete('/api/persons/:id', (request, response, next) => {
+    Person.findByIdAndRemove(request.params.id)
+      .then(result => {
+        response.status(204).end()
+      })
+      .catch(error => next(error))
 })
+
+// check if person already exists in phonebook and if so update new number
+app.put('/api/persons/:id', (request, response, next) => {
+  const id = request.params.id
+  const newNumber = request.body.number
+
+  Person.findByIdAndUpdate(id, { number: newNumber }, { new: true })
+    .then(updatedPerson => response.json(updatedPerson))
+    .catch(error => next(error));
+  });
 
 // Math.random creates large random number for ID
 // handle posting new person to server, fails if name/number missing, or number already exists
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
-  // 
-  if (!body.name || !body.number) {
-      return response.status(400).json({ 
-          error: 'name or number missing' 
-      })
-  } else {
-      const person = new Person({
-          name: body.name,
-          number: body.number,
-          id: Math.round(Math.random() * 1000000)
-        })
-        person.save().then(savedPerson => {
-          response.json(savedPerson)
-        })
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  })
+    console.log('name',person.name)
+    console.log('number', person.number)
+    person.save().then(savedPerson => {
+      response.json(savedPerson)
+    }).catch(error => next(error))
   }
-})
+)
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 
 app.use(unknownEndpoint)
+app.use(errorHandler)
+
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
