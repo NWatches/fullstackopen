@@ -9,18 +9,32 @@ console.log('connecting to', url)
 
 // connect to MongoDB
 mongoose.connect(url)
+  // eslint-disable-next-line no-unused-vars
   .then(result => {
     console.log('connected to MongoDB')
-})
+  })
   .catch((error) => {
     console.log('error connecting to MongoDB:', error.message)
-})
+  })
 
 // define schema for person
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
-    id: String
+  name: {
+    type: String,
+    minLength: 3,
+    required: true
+  },
+  number: {
+    type: String,
+    minLength: 8,
+    required: true,
+    validate: {
+      validator: function(v) {
+        return /^\d{2,3}-\d{5,6}$/.test(v)
+      }
+    }
+  },
+  id: String
 })
 
 // redefine JSON returned to not include MongoDB's ID and Version
