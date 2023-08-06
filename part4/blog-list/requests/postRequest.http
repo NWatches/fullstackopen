@@ -1,0 +1,13 @@
+### POST /api/blogs
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Example Blog",
+  "author": "Squidward Tentacles",
+  "url": "https://squidward.com/clarinets",
+  "likes": 100
+}
+
+### GET /api/blogs
+GET http://localhost:3003/api/blogs 
