@@ -9,5 +9,5 @@ Content-Type: application/json
   "likes": 100
 }
 
-### GET /api/blogs
-GET http://localhost:3003/api/blogs 
+### Get api/blogs
+GET http://localhost:3003/api/blogs
