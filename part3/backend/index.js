@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require('express')
-const morgan = require('morgan');
+const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
 
@@ -72,7 +72,7 @@ app.get('/info', (request, response, next) => {
   Person.find({}).then(persons => {
     const personCount = persons.length
     const countMessage = `Phonebook has info for ${personCount} people`
-    const currentDate = new Date();
+    const currentDate = new Date()
     const resp = `<p>${countMessage}</p><p>${currentDate}</p>`
 
     response.send(resp)
@@ -97,8 +97,8 @@ app.put('/api/persons/:id', (request, response, next) => {
 
   Person.findByIdAndUpdate(id, { number: newNumber }, { new: true })
     .then(updatedPerson => response.json(updatedPerson))
-    .catch(error => next(error));
-});
+    .catch(error => next(error))
+})
 
 // Math.random creates large random number for ID
 // handle posting new person to server, fails if name/number missing, or number already exists
