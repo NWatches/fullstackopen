@@ -8,6 +8,3 @@ Content-Type: application/json
   "url": "https://squidward.com/clarinets",
   "likes": 100
 }
-
-### Get api/blogs
-GET http://localhost:3003/api/blogs
