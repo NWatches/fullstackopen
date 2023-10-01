@@ -5,10 +5,12 @@ const app = require('../app')
 const api = supertest(app)
 
 test('blog posts returned', async () => {
-	await api
+	const response = await api
 		.get('/api/blogs')
 		.expect(200)
 		.expect('Content-Type', /application\/json/)
+
+	console.log(response.body);
 })
 
 afterAll(async () => {
