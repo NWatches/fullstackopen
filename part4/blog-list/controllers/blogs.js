@@ -27,7 +27,7 @@ blogRouter.get('/', async (request, response) => {
 })
 */
 
-blogRouter.post('/', async (request, response) => {
+/*blogRouter.post('/', async (request, response) => {
 	try {
 		const blog = new Blog(request.body)
 		const newBlog = await blog.save()
@@ -35,9 +35,15 @@ blogRouter.post('/', async (request, response) => {
 	} catch(error) {
 		response.status(400).json({ error: error.message })
 	}
+})*/
+blogRouter.post('/', async (request, response) => {
+	const body = request.body
+	const blog = new Blog(body)
+	const newBlog = await blog.save()
+	response.status(201).json(newBlog)
 })
 
-// 4.13
+
 blogRouter.delete('/:id', async (request, response) => {
 	await Blog.findByIdAndRemove(request.params.id)
 	response.status(204).end()
