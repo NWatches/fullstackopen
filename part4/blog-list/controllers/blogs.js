@@ -1,4 +1,5 @@
 const blogRouter = require('express').Router()
+// const blog = require('../models/blog')
 const Blog = require('../models/blog')
 /* old get request before async/await refactor
 blogRouter.get('/', (request, response) => {
@@ -15,7 +16,7 @@ blogRouter.get('/', async (request, response) => {
 	response.json(blogs)
 })
 
-blogRouter.post('/', (request, response) => {
+/*blogRouter.post('/', (request, response) => {
 	const blog = new Blog(request.body)
 
 	blog
@@ -24,5 +25,21 @@ blogRouter.post('/', (request, response) => {
 			response.status(201).json(result)
 		})
 })
+*/
 
+blogRouter.post('/', async (request, response) => {
+	try {
+		const blog = new Blog(request.body)
+		const newBlog = await blog.save()
+		response.status(201).json(newBlog)
+	} catch(error) {
+		response.status(400).json({ error: error.message })
+	}
+})
+
+// 4.13
+blogRouter.delete('/:id', async (request, response) => {
+	await Blog.findByIdAndRemove(request.params.id)
+	response.status(204).end()
+})
 module.exports = blogRouter
