@@ -90,3 +90,27 @@ test('verifies that posts sent with title or url missing return 400 Bad Request 
 afterAll(async () => {
 	await mongoose.connection.close()
 })
+
+test('deletes a post', async() => {
+	const newBlog = {
+		'title': 'Delete Blog',
+		'author': 'Pearl Krabs',
+		'url': 'https://pearl.com/money',
+		'likes': 420
+	}
+
+	const response = await api
+		.post('/api/blogs')
+		.send(newBlog)
+		.expect(400)
+
+	const blogID = response.body.id
+	
+	await api
+		.delete(`/api/blogs/${blogID}`)
+		.expect(204)
+
+	const verifyResponse = await api.get(`/api/blogs/${blogID}`)
+
+	expect(verifyResponse.status).toBe(404);
+})
