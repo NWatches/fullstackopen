@@ -102,7 +102,7 @@ test('deletes a post', async() => {
 	const response = await api
 		.post('/api/blogs')
 		.send(newBlog)
-		.expect(400)
+		.expect(201)
 
 	const blogID = response.body.id
 	
@@ -112,5 +112,5 @@ test('deletes a post', async() => {
 
 	const verifyResponse = await api.get(`/api/blogs/${blogID}`)
 
-	expect(verifyResponse.status).toBe(404);
+	expect(verifyResponse.status).toBe(404)
 })
