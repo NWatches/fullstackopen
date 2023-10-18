@@ -87,10 +87,6 @@ test('verifies that posts sent with title or url missing return 400 Bad Request 
 		.expect(400)
 })
 
-afterAll(async () => {
-	await mongoose.connection.close()
-})
-
 test('deletes a post', async() => {
 	const newBlog = {
 		'title': 'Delete Blog',
@@ -113,4 +109,37 @@ test('deletes a post', async() => {
 	const verifyResponse = await api.get(`/api/blogs/${blogID}`)
 
 	expect(verifyResponse.status).toBe(404)
+})
+
+test('updates likes', async() => {
+	const newBlog = {
+		'title': 'Update Likes Blog',
+		'author': 'Gary Snail',
+		'url': 'https://gary.com/shell',
+		'likes': 129
+	}
+
+	const response = await api
+		.post('/api/blogs')
+		.send(newBlog)
+		.expect(201)
+
+	const updatedID = response.body.id
+
+	const updatedLikes = 333
+
+	await api
+		.put(`/api/blogs/${updatedID}`)
+		.send({ likes: updatedLikes })
+		.expect(200)
+
+	const finalResponse = await api.get(`/api/blogs/${updatedID}`)
+	expect(finalResponse.body.likes).toBe(updatedLikes)
+
+})
+
+
+
+afterAll(async () => {
+	await mongoose.connection.close()
 })
