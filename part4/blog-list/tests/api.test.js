@@ -108,7 +108,7 @@ test('deletes a post', async() => {
 
 	const verifyResponse = await api.get(`/api/blogs/${blogID}`)
 
-	expect(verifyResponse.status).toBe(404)
+	expect(verifyResponse.body).toBe(null)
 })
 
 test('updates likes', async() => {

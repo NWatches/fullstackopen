@@ -48,6 +48,11 @@ blogRouter.delete('/:id', async (request, response) => {
 	response.status(204).end()
 })
 
+blogRouter.get('/:id', async (request, response) => {
+	const blog = await Blog.findById(request.params.id)
+	response.json(blog)
+})
+
 blogRouter.put('/:id', async (request, response, next) => {
 	const body = request.body
 
