@@ -138,7 +138,72 @@ test('updates likes', async() => {
 
 })
 
+// Also, implement tests that ensure invalid 
+// users are not created and that an invalid 
+// add user operation returns a suitable status code and error message.
+describe('ensures invalid users not created and invalid users return error', () => {
+	const invalidUsernameMissing = {
+		'name': 'S3dfasd',
+		'password': 'basdav'
+	}
+	
+	test('username missing', async() => {
+		await api
+			.post('/api/users')
+			.send(invalidUsernameMissing)
+			.expect(400)
+	})
 
+	const invalidUsernameLessThan3 = {
+		'username': 'as',
+		'name': 'blorgwort',
+		'password': 'deialsdc'
+	}
+
+	test('username less than 3 characters', async() => {
+		await api
+			.post('/api/users')
+			.send(invalidUsernameLessThan3)
+			.expect(400)
+	})
+
+	const invalidPasswordLessThan3 = {
+		'username': 'squeaky',
+		'name': 'sqeuakers',
+		'password': 'so'
+	}
+
+	test('password less than 3 characters', async() => {
+		await api
+			.post('/api/users')
+			.send(invalidPasswordLessThan3)
+			.expect(400)
+	})
+
+	const duplicateUsernameTest = {
+		'username': 'boglop',
+		'name': 'Jorshi',
+		'password': 'beagelweld'
+	}
+
+	const invalidDuplicateUsernameTest = {
+		'username': 'boglop',
+		'name': 'Tgilre',
+		'password': 'geidlaqowf'
+	}
+
+	test('username unique', async() => {
+		await api
+			.post('/api/users')
+			.send(duplicateUsernameTest)
+			.expect(201)
+
+		await api
+			.post('/api/users')
+			.send(invalidDuplicateUsernameTest)
+			.expect(400)
+	})
+})	
 
 afterAll(async () => {
 	await mongoose.connection.close()
