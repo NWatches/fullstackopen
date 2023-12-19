@@ -204,7 +204,7 @@ describe('ensures invalid users not created and invalid users return error', () 
 			.expect(400)
 	})
 })	
-
+// write expect for content type, go over chapter 4 to ensure you did this right + beforeAll
 afterAll(async () => {
 	await mongoose.connection.close()
 })
