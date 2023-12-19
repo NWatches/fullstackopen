@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
-
 const api = supertest(app)
+const User = require('../models/user')
 
 test('blog posts returned', async () => {
 	const response = await api
@@ -192,6 +192,10 @@ describe('ensures invalid users not created and invalid users return error', () 
 		'password': 'geidlaqowf'
 	}
 
+	beforeEach(async () => {
+		await User.deleteOne({ username: 'boglop' })
+	})
+	
 	test('username unique', async() => {
 		await api
 			.post('/api/users')
