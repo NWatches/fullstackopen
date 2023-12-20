@@ -3,6 +3,72 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const User = require('../models/user')
+const Blog = require('../models/blog')
+
+// initialize list of some blogs
+const initialBlogs = [
+	{
+		'users': [],
+		'title': 'Sample Blog',
+		'author': 'John Doe',
+		'url': 'https://example.com/sample-blog',
+		'likes': 10,
+	},
+	{
+		'users': [],
+		'title': 'Example Blog',
+		'author': 'Squidward Tentacles',
+		'url': 'https://squidward.com/clarinets',
+		'likes': 100,
+	},
+	{
+		'users': [],
+		'title': 'Test Blog',
+		'author': 'Buidward Bentacles',
+		'url': 'https://bquidward.com/barinets',
+		'likes': 10,
+	}
+]
+
+const initialUsers = [
+	{
+		'username': 'Pig',
+		'name': 'Pigward',
+		'password': 'fq210r9rfqq'
+	},
+	{
+		'username': 'Dog',
+		'name': 'Dogathon',
+		'password': '21904f1hde'
+	},
+	{
+		'username': 'Cat',
+		'name': 'Catica',
+		'password': 'ffuqh149873f'
+	}
+]
+
+beforeEach(async () => {
+	await Blog.deleteMany({})
+	console.log('Blogs cleared')
+
+	initialBlogs.forEach(async (blog) => {
+		let blogObject	= new Blog(blog)
+		await blogObject.save()
+		console.log('Blogs saved')
+	})
+
+	await User.deleteMany({})
+	console.log('Users cleared')
+
+	initialUsers.forEach(async (user) => {
+		let userObject = new User(user)
+		await userObject.save()
+		console.log('Users saved')
+	})
+	
+	console.log('done')
+})
 
 test('blog posts returned', async () => {
 	const response = await api
@@ -138,9 +204,6 @@ test('updates likes', async() => {
 
 })
 
-// Also, implement tests that ensure invalid 
-// users are not created and that an invalid 
-// add user operation returns a suitable status code and error message.
 describe('ensures invalid users not created and invalid users return error', () => {
 	const invalidUsernameMissing = {
 		'name': 'S3dfasd',
