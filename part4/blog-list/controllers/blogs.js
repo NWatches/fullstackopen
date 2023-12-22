@@ -1,6 +1,6 @@
 const blogRouter = require('express').Router()
-// const blog = require('../models/blog')
 const Blog = require('../models/blog')
+// const User = require('../models/users')
 /* old get request before async/await refactor
 blogRouter.get('/', (request, response) => {
 	Blog
@@ -44,6 +44,28 @@ blogRouter.post('/', async (request, response) => {
 	const newBlog = await blog.save()
 	response.status(201).json(newBlog)
 })
+
+// create new blogRouter.post request to include Users by id
+// new usersRouter.post
+/*
+blogRouter.post('/', async (request, response) => {
+	const body = request.body
+
+	const user = await User.findById(body.userId)
+
+	const blog = new Blog({
+		title: body.title,
+		author: body.author,
+		url: body.url,
+		likes: body.likes,
+		user: user.id
+	})
+
+	const savedBlog = await note.save()
+	user.blogs = user.blogs.concat(savedBlog._id)
+	await user.save()
+})
+*/
 
 blogRouter.delete('/:id', async (request, response) => {
 	await Blog.findByIdAndRemove(request.params.id)
